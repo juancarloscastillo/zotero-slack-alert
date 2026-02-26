@@ -1,0 +1,13 @@
+{
+    "files.watcherExclude": {
+        "**/.git/**": true,
+        "**/node_modules/**": true,
+        "**/.venv/**": true,
+        "**/__pycache__/**": true,
+        "**/.dropbox/**": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/__pycache__": true
+    }
+}
