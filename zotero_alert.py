@@ -4,6 +4,7 @@ import os
 GROUP_ID = os.environ["GROUP_ID"]
 ZOTERO_API_KEY = os.environ["ZOTERO_API_KEY"]
 SLACK_WEBHOOK = os.environ["SLACK_WEBHOOK"]
+
 LAST_ITEM_FILE = "last_item.txt"
 
 headers = {"Zotero-API-Key": ZOTERO_API_KEY}
@@ -13,7 +14,7 @@ def get_last_saved():
         with open(LAST_ITEM_FILE, "r") as f:
             return f.read().strip()
     except:
-        return None
+        return "none"
 
 def save_last(key):
     with open(LAST_ITEM_FILE, "w") as f:
@@ -28,6 +29,7 @@ def main():
 
     items = r.json()
     if not items:
+        print("No items found.")
         return
 
     item = items[0]
@@ -42,7 +44,9 @@ def main():
     abstract = data.get("abstractNote", "No abstract available")
 
     message = {
-        "text": f"📚 *New Zotero item added*\n*{title}*\n\n*Abstract:*\n{abstract[:1500]}"
+        "text": f"📚 *New Zotero item added*\n"
+                f"*{title}*\n\n"
+                f"*Abstract:*\n{abstract[:1500]}"
     }
 
     requests.post(SLACK_WEBHOOK, json=message)
