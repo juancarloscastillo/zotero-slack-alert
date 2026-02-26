@@ -51,8 +51,8 @@ def main():
     last_seen = get_last_saved()
 
     url = (
-        f"https://api.zotero.org/groups/{GROUP_ID}/items/top"
-        f"?sort=dateAdded&direction=desc&limit=20"
+       f"https://api.zotero.org/groups/{GROUP_ID}/items/top"
+       f"?sort=dateAdded&direction=desc&limit=20&include=data,meta"
     )
 
     r = requests.get(url, headers=headers)
