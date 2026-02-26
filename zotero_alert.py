@@ -1,75 +1,54 @@
 import requests
-import time
+import os
 
-GROUP_ID = "6308411"
-ZOTERO_API_KEY = "zzdhXdyeeO2ujQuR75OxwhjC"
-SLACK_WEBHOOK = "https://hooks.slack.com/services/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"
+GROUP_ID = os.environ["6308411"]
+ZOTERO_API_KEY = os.environ["zzdhXdyeeO2ujQuR75OxwhjC"]
+SLACK_WEBHOOK = os.environ["https://hooks.slack.com/services/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"]
+LAST_ITEM_FILE = "last_item.txt"
 
-headers = {
-    "Zotero-API-Key": ZOTERO_API_KEY
-}
+headers = {"Zotero-API-Key": ZOTERO_API_KEY}
 
-last_seen = None
+def get_last_saved():
+    try:
+        with open(LAST_ITEM_FILE, "r") as f:
+            return f.read().strip()
+    except:
+        return None
 
-def get_latest_item():
+def save_last(key):
+    with open(LAST_ITEM_FILE, "w") as f:
+        f.write(key)
+
+def main():
+    last_seen = get_last_saved()
+
     url = f"https://api.zotero.org/groups/{GROUP_ID}/items?sort=dateAdded&direction=desc&limit=1"
     r = requests.get(url, headers=headers)
     r.raise_for_status()
-    return r.json()[0]
 
-def send_to_slack(title, creators, abstract, url):
+    items = r.json()
+    if not items:
+        return
+
+    item = items[0]
+    item_key = item["key"]
+
+    if item_key == last_seen:
+        print("No new items.")
+        return
+
+    data = item["data"]
+    title = data.get("title", "No title")
+    abstract = data.get("abstractNote", "No abstract available")
+
     message = {
-        "blocks": [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*📚 New Zotero Item Added*\n*{title}*"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*Authors:* {creators}"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*Abstract:*\n{abstract[:3000]}"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"<{url}|Open in Zotero>"
-                }
-            }
-        ]
+        "text": f"📚 *New Zotero item added*\n*{title}*\n\n*Abstract:*\n{abstract[:1500]}"
     }
 
     requests.post(SLACK_WEBHOOK, json=message)
 
-while True:
-    item = get_latest_item()
-    item_key = item["key"]
+    save_last(item_key)
+    print("Posted new item.")
 
-    if item_key != last_seen:
-        last_seen = item_key
-
-        data = item["data"]
-        title = data.get("title", "No title")
-        abstract = data.get("abstractNote", "No abstract available")
-        url = data.get("url", "")
-        
-        creators = ", ".join(
-            f"{c.get('lastName','')}"
-            for c in data.get("creators", [])
-        )
-
-        send_to_slack(title, creators, abstract, url)
-
-    time.sleep(300)
+if __name__ == "__main__":
+    main()
