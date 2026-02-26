@@ -23,7 +23,7 @@ def save_last(key):
 def main():
     last_seen = get_last_saved()
 
-    url = f"https://api.zotero.org/groups/{GROUP_ID}/items?sort=dateAdded&direction=desc&limit=1"
+    url = f"https://api.zotero.org/groups/{GROUP_ID}/items/top?sort=dateAdded&direction=desc&limit=1"
     r = requests.get(url, headers=headers)
     r.raise_for_status()
 
