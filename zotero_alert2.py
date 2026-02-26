@@ -3,7 +3,7 @@ import time
 
 GROUP_ID = "6308411"
 ZOTERO_API_KEY = "zzdhXdyeeO2ujQuR75OxwhjC"
-SLACK_WEBHOOK = "https://hooks.slack.com/services/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"
+SLACK_WEBHOOK = "https://hooks.slack.com/services/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"
 
 headers = {
     "Zotero-API-Key": ZOTERO_API_KEY
