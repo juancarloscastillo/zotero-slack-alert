@@ -52,7 +52,7 @@ def main():
 
     url = (
        f"https://api.zotero.org/groups/{GROUP_ID}/items/top"
-       f"?sort=dateAdded&direction=desc&limit=20&include=data,meta"
+       f"?sort=dateAdded&direction=desc&limit=20&include=data"
     )
 
     r = requests.get(url, headers=headers)
