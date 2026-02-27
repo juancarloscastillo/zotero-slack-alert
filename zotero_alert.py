@@ -1,12 +1,12 @@
 import requests
 import os
 
-GROUP_ID = "6308411"
+GROUP_ID = os.environ["GROUP_ID"]
 ZOTERO_API_KEY = os.environ["ZOTERO_API_KEY"]
-SLACK_WEBHOOK = "https://hooks.slack.com/services/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"
+SLACK_WEBHOOK = os.environ["SLACK_WEBHOOK"]
 
 LAST_ITEM_FILE = "last_item.txt"
-headers = {"Zotero-API-Key": ZOTERO_API_KEY}
+headers = {"Zotero-API-Key": ZOTERO_API_KEY} 
 
 
 def get_last_saved():
