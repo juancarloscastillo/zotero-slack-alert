@@ -1,8 +1,9 @@
 # zotero-slack-alert
 
-This repo/template describes the implementation of a Zotero Slack alert system. It uses the Zotero API to check for new items in a specified library and sends a notification to a Slack channel via a webhook when new items are detected.
+This repo/template describes the implementation of a Zotero Slack alert system. It uses the Zotero API to check for new items in a specified library and sends a notification to a Slack channel via a webhook when new items are detected. The automation is set up as a GitHub Action workflow that runs on a schedule (e.g., every hour) to continuously monitor the Zotero library for updates.
 
 It assumes that:
+
 - You have a Zotero account and access to a group/library that you want to monitor. I used this for a group library, but it should work for personal libraries as well.
 - You have a Slack workspace and the necessary permissions to create a webhook for a channel.
 
