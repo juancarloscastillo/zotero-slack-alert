@@ -1,9 +1,9 @@
 import requests
 import os
 
-GROUP_ID = os.environ["GROUP_ID"]
+GROUP_ID = os.environ["6308411"]
 ZOTERO_API_KEY = os.environ["ZOTERO_API_KEY"]
-SLACK_WEBHOOK = os.environ["SLACK_WEBHOOK"]
+SLACK_WEBHOOK = os.environ["https://hooks.slack.com/services/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"]
 
 LAST_ITEM_FILE = "last_item.txt"
 headers = {"Zotero-API-Key": ZOTERO_API_KEY}
