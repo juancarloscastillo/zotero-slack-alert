@@ -9,7 +9,9 @@ It assumes that:
 
 ## Gathering the pieces
 
-To make it work you only need to copy the repo (easy via template button) and then get this information: 
+To make it work you only need to **copy the repo** (easy via template button) and create a new one in your user or organization you have permission to. BUT ... in case you want to add this to an existing repo, follow the steps at the end.
+
+First, get this information: 
 
 1. A Zotero group/library ID to monitor for new items: to find this, go to your Zotero web library, select the folder, and get the number in the web address, e.g., `https://www.zotero.org/groups/<group_id_number>/...`. this is the **`GROUP_ID`**.
 
@@ -29,4 +31,11 @@ Now you just need to set up these three pieces of information as "Github Secrets
 
 If you want to test it, you can trigger the workflow manually from the "Actions" tab in your GitHub repository. Just select the workflow and click on "Run workflow". You should see the workflow run and, if there are new items in the Zotero library, a notification should appear in your Slack channel.
 That's it! 
+
+AND, in case you prefer to **add the workflow to an already existing repo**, download the folder and copy it in the root of your repo. And two more hacks:
+- move the .github/workflow folder into the root
+- update the path to the script in the .github/workflow/zotero.yml file, line 32 to:  `run: python zotero-slack-alert-main/zotero_alert.py
+
+
+
 
