@@ -24,6 +24,16 @@ jobs:
       - name: Install requests
         run: pip install requests
 
+      - name: Validate required secrets
+        env:
+          GROUP_ID: ${{ secrets.GROUP_ID }}
+          ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          test -n "$GROUP_ID" || (echo "Missing required secret: GROUP_ID" && exit 1)
+          test -n "$ZOTERO_API_KEY" || (echo "Missing required secret: ZOTERO_API_KEY" && exit 1)
+          test -n "$SLACK_WEBHOOK" || (echo "Missing required secret: SLACK_WEBHOOK" && exit 1)
+
       - name: Run script
         env:
           GROUP_ID: ${{ secrets.GROUP_ID }}
