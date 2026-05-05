@@ -64,13 +64,24 @@ def get_creator_name(meta):
 def main():
     last_seen = get_last_saved()
 
-    url = (
-       f"https://api.zotero.org/groups/{GROUP_ID}/items/top"
-         f"?sort=dateAdded&direction=desc&limit=20&include=data,meta"
-    )
+    url = f"https://api.zotero.org/groups/{GROUP_ID}/items/top"
+    params = {
+        "sort": "dateAdded",
+        "direction": "desc",
+        "limit": 20,
+        # Zotero format=json supports include values like data/bib/citation.
+        # "meta" is not a valid include value and causes HTTP 400.
+        "include": "data",
+    }
 
-    r = requests.get(url, headers=headers)
-    r.raise_for_status()
+    r = requests.get(url, headers=headers, params=params, timeout=30)
+    try:
+        r.raise_for_status()
+    except requests.HTTPError:
+        print(f"Zotero API request failed: {r.status_code}")
+        if r.text:
+            print(r.text[:500])
+        raise
     items = r.json()
 
     if not items:
