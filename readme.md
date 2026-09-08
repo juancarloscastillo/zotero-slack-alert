@@ -13,11 +13,13 @@ To make it work you only need to **copy the repo** (easy via template button) an
 
 First, get this information: 
 
-1. A Zotero group/library ID to monitor for new items: to find this, go to your Zotero web library, select the folder, and get the number in the web address, e.g., `https://www.zotero.org/groups/<group_id_number>/...`. the number that appears after "groups" in the link (signalized as **group_id_number** in the example link) is the number corresponding to  **`GROUP_ID`**, **NOT THE WHOLE LINK TO THE ZOTERO ONLINE LIBRARY**.
+1. A Zotero group/library ID to monitor for new items: to find this, go to your Zotero web library, select the folder, and get the number in the web address, e.g., `https://www.zotero.org/groups/<group_id_number>/...`.
+  - The number that appears after "groups" (signalized as **group_id_number** in the example link) is the number corresponding to  **`GROUP_ID`**, **NOT THE WHOLE LINK TO THE ZOTERO ONLINE LIBRARY**.
+  - In case there is a subcollection, you will also need the COLLECTION_ID, which is the code/number that appears after "collections" in the web address.
 
-2. A Zotero API key with access to the specified group/library: to create an API key, go to [your Zotero account settings, navigate to the "API Keys" section,](https://www.zotero.org/settings/security#applications) and generate a new key with the appropriate permissions for the group/library you want to monitor. IMPORTANT: select _Read access to groups_ and _Read access to items. Copy the API code in a safe place. This is the **`ZOTERO_API_KEY`**.
+3. A Zotero API key with access to the specified group/library: to create an API key, go to [your Zotero account settings, navigate to the "API Keys" section,](https://www.zotero.org/settings/security#applications) and generate a new key with the appropriate permissions for the group/library you want to monitor. IMPORTANT: select _Read access to groups_ and _Read access to items. Copy the API code in a safe place. This is the **`ZOTERO_API_KEY`**.
 
-3. A Slack webhook URL to send notifications to a Slack channel: install the "Incoming Webhooks" app in your Slack workspace. Go to [this link](https://datasoc-workspace.slack.com/marketplace/A0F7XDUAZ-incoming-webhooks), select the appropriate workspace (up right), then green button "Add to Slack", and in the configuration the important is to select the slack channel where to get the alerts and copy the URL of the webhook. This is the **`SLACK_WEBHOOK`**.
+4. A Slack webhook URL to send notifications to a Slack channel: install the "Incoming Webhooks" app in your Slack workspace. Go to [this link](https://datasoc-workspace.slack.com/marketplace/A0F7XDUAZ-incoming-webhooks), select the appropriate workspace (up right), then green button "Add to Slack", and in the configuration the important is to select the slack channel where to get the alerts and copy the URL of the webhook. This is the **`SLACK_WEBHOOK`**.
 
 ## Now the Secrets
 
