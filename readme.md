@@ -1,4 +1,4 @@
-# zotero-slack-alert
+# [zotero-slack-alert](https://github.com/juancarloscastillo/zotero-slack-alert)
 
 This repo/template describes the implementation of a Zotero Slack alert system. It uses the Zotero API to check for new items in a specified library and sends a notification to a Slack channel via a webhook when new items are detected. The automation is set up as a GitHub Action workflow that runs on a schedule (e.g., every hour) to continuously monitor the Zotero library for updates.
 
@@ -13,7 +13,7 @@ To make it work you only need to **copy the repo** (easy via template button) an
 
 First, get this information: 
 
-1. A Zotero group/library ID to monitor for new items: to find this, go to your Zotero web library, select the folder, and get the number in the web address, e.g., `https://www.zotero.org/groups/<group_id_number>/...`. this is the **`GROUP_ID`**.
+1. A Zotero group/library ID to monitor for new items: to find this, go to your Zotero web library, select the folder, and get the number in the web address, e.g., `https://www.zotero.org/groups/<group_id_number>/...`. the number that appears after "groups" in the link (signalized as **group_id_number¨ in the example link) is the number corresponding to  **`GROUP_ID`**, **NOT THE WHOLE LINK TO THE ZOTERO ONLINE LIBRARY**.
 
 2. A Zotero API key with access to the specified group/library: to create an API key, go to [your Zotero account settings, navigate to the "API Keys" section,](https://www.zotero.org/settings/security#applications) and generate a new key with the appropriate permissions for the group/library you want to monitor. IMPORTANT: select _Read access to groups_ and _Read access to items. Copy the API code in a safe place. This is the **`ZOTERO_API_KEY`**.
 
