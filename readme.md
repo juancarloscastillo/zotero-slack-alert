@@ -1,5 +1,7 @@
 # [zotero-slack-alert](https://github.com/juancarloscastillo/zotero-slack-alert)
 
+![](images/zotero-slack-alert.png)
+
 This repo & template describes the implementation of a Zotero-Slack alert system: getting a notification in a Slack channel when new items are added to a Zotero library.
 
 It assumes that you have:
