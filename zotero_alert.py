@@ -1,5 +1,23 @@
-import requests
 import os
+import requests
+
+
+def normalize_collection_target(raw_value):
+    value = (raw_value or "").strip()
+    if not value:
+        return "", ""
+
+    group_id_from_url = ""
+    if "/groups/" in value:
+        group_part = value.split("/groups/", 1)[1]
+        group_id_from_url = group_part.split("/", 1)[0].strip()
+
+    if "/collections/" in value:
+        value = value.split("/collections/", 1)[1]
+        value = value.split("/", 1)[0]
+
+    value = value.split("?", 1)[0].split("#", 1)[0].strip()
+    return value, group_id_from_url
 
 
 # ============================================================
@@ -9,11 +27,21 @@ import os
 GROUP_ID = os.environ["GROUP_ID"]
 ZOTERO_API_KEY = os.environ["ZOTERO_API_KEY"]
 SLACK_WEBHOOK = os.environ["SLACK_WEBHOOK"]
+COLLECTION_KEY_RAW = (
+    os.getenv("COLLECTION_KEY")
+    or os.getenv("SUBCOLLECTION_KEY")
+    or os.getenv("COLLECTION_ID")
+    or ""
+).strip()
+COLLECTION_KEY, GROUP_ID_FROM_COLLECTION_URL = normalize_collection_target(COLLECTION_KEY_RAW)
+ACTIVE_GROUP_ID = GROUP_ID_FROM_COLLECTION_URL or GROUP_ID
 
-# Optional:
-# If COLLECTION_KEY is provided, monitor only that collection.
-# If it is empty or not defined, monitor the entire group.
-COLLECTION_KEY = os.environ.get("COLLECTION_KEY", "").strip()
+INCLUDE_SUBCOLLECTIONS = os.getenv("INCLUDE_SUBCOLLECTIONS", "false").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
 
 # ============================================================
@@ -95,7 +123,7 @@ def has_pdf(item_key):
 
     url = (
         f"https://api.zotero.org/groups/"
-        f"{GROUP_ID}/items/{item_key}/children"
+        f"{ACTIVE_GROUP_ID}/items/{item_key}/children"
     )
 
     response = requests.get(
@@ -132,42 +160,84 @@ def get_items():
         retrieve items from the entire group.
     """
 
-    if COLLECTION_KEY:
+    params = {
+        "sort": "dateAdded",
+        "direction": "desc",
+        "limit": 20,
+        "include": "data",
+    }
 
+    if not COLLECTION_KEY:
+        print(f"Monitoring entire Zotero group: {ACTIVE_GROUP_ID}")
+        url = f"https://api.zotero.org/groups/{ACTIVE_GROUP_ID}/items/top"
+        response = requests.get(url, headers=headers, params=params, timeout=30)
+        response.raise_for_status()
+        return response.json()
+
+    print(f"Monitoring Zotero collection: {COLLECTION_KEY}")
+
+    collection_keys = [COLLECTION_KEY]
+
+    if INCLUDE_SUBCOLLECTIONS:
+        queue = [COLLECTION_KEY]
+        seen = set()
+
+        while queue:
+            current = queue.pop(0)
+            if current in seen:
+                continue
+
+            seen.add(current)
+
+            url = f"https://api.zotero.org/groups/{ACTIVE_GROUP_ID}/collections/{current}/collections"
+            response = requests.get(
+                url,
+                headers=headers,
+                params={"limit": 100, "format": "json"},
+                timeout=30,
+            )
+
+            if not response.ok:
+                if current == COLLECTION_KEY:
+                    response.raise_for_status()
+                continue
+
+            for collection in response.json():
+                key = collection.get("key")
+                if key and key not in seen:
+                    collection_keys.append(key)
+                    queue.append(key)
+
+    items = []
+    seen_items = set()
+
+    for collection_key in collection_keys:
         url = (
-            f"https://api.zotero.org/groups/"
-            f"{GROUP_ID}/collections/"
-            f"{COLLECTION_KEY}/items/top"
-            f"?sort=dateAdded&direction=desc&limit=20"
+            f"https://api.zotero.org/groups/{ACTIVE_GROUP_ID}/collections/"
+            f"{collection_key}/items/top"
         )
 
-        print(
-            f"Monitoring Zotero collection: "
-            f"{COLLECTION_KEY}"
+        response = requests.get(
+            url,
+            headers=headers,
+            params=params,
+            timeout=30,
         )
 
-    else:
+        response.raise_for_status()
 
-        url = (
-            f"https://api.zotero.org/groups/"
-            f"{GROUP_ID}/items"
-            f"?sort=dateAdded&direction=desc&limit=20"
-        )
+        for item in response.json():
+            item_key = item.get("key")
+            if item_key and item_key not in seen_items:
+                seen_items.add(item_key)
+                items.append(item)
 
-        print(
-            f"Monitoring entire Zotero group: "
-            f"{GROUP_ID}"
-        )
-
-    response = requests.get(
-        url,
-        headers=headers,
-        timeout=30
+    items.sort(
+        key=lambda item: item.get("data", {}).get("dateAdded", ""),
+        reverse=True,
     )
 
-    response.raise_for_status()
-
-    return response.json()
+    return items
 
 
 # ============================================================
@@ -325,7 +395,7 @@ def main():
 
         zotero_link = (
             f"https://www.zotero.org/groups/"
-            f"{GROUP_ID}/items/{item_key}"
+                f"{ACTIVE_GROUP_ID}/items/{item_key}"
         )
 
 
