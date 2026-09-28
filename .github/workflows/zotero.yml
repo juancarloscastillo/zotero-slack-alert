@@ -2,7 +2,7 @@ name: Zotero Slack Alert
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -32,9 +32,10 @@ jobs:
           ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
-          test -n "$GROUP_ID" || (echo "Missing required secret: GROUP_ID" && exit 1)
-          test -n "$ZOTERO_API_KEY" || (echo "Missing required secret: ZOTERO_API_KEY" && exit 1)
-          test -n "$SLACK_WEBHOOK" || (echo "Missing required secret: SLACK_WEBHOOK" && exit 1)
+          test -n "$GROUP_ID" || (echo "Missing GROUP_ID" && exit 1)
+          test -n "$COLLECTION_KEY" || (echo "Missing COLLECTION_KEY" && exit 1)
+          test -n "$ZOTERO_API_KEY" || (echo "Missing ZOTERO_API_KEY" && exit 1)
+          test -n "$SLACK_WEBHOOK" || (echo "Missing SLACK_WEBHOOK" && exit 1)
 
       - name: Run script
         env:
@@ -49,6 +50,6 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add last_item*.txt
-          git commit -m "Update Zotero state" || echo "No changes"
+          git add last_item.txt
+          git commit -m "Update last item" || echo "No changes"
           git push
